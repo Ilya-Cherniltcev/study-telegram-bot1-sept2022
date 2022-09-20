@@ -1,0 +1,22 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<changeSet id="3" author="ilyachernilsev">
+    <preConditions onFail="MARK_RAN">
+        <not>
+            <tableExists tableName="notification_task"/>
+        </not>
+    </preConditions>
+    <createTable tableName="notification_task">
+        <column name="key" type="int">
+            <constraints nullable="false" unique="true" primaryKey="true"/>
+        </column>
+        <column name="id_chat" type="int">
+            <constraints nullable="false"/>
+        </column>
+        <column name="message" type="text">
+            <constraints nullable="true"/>
+        </column>
+        <column name="date_time" type="datetime">
+            <constraints nullable="true"/>
+        </column>
+    </createTable>
+</changeSet>
