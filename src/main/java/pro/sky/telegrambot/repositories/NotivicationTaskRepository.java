@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import pro.sky.telegrambot.model.NotificationTask;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 public interface NotivicationTaskRepository extends JpaRepository<NotificationTask, Integer> {
@@ -13,4 +14,5 @@ public interface NotivicationTaskRepository extends JpaRepository<NotificationTa
             "AND DATE_TRUNC('minute', CURRENT_TIMESTAMP) + (interval '59s')", nativeQuery = true)
     Collection<NotificationTask> findAllByLocalDateTime();
 
+    Collection<NotificationTask> findNotificationTasksByDateTimeBefore(LocalDateTime localDateTime);
 }

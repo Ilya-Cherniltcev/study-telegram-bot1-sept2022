@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.model.Update;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import pro.sky.telegrambot.listener.TelegramBotUpdatesListener;
 import pro.sky.telegrambot.model.NotificationTask;
 import pro.sky.telegrambot.repositories.NotivicationTaskRepository;
@@ -14,7 +15,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Pattern;
 
-@Component
+//@Component
+@Service
 public class MessagesService {
     private final Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
     private final NotivicationTaskRepository notivicationTaskRepository;
@@ -23,7 +25,7 @@ public class MessagesService {
         this.notivicationTaskRepository = notivicationTaskRepository;
     }
 
-    // --------- Говорим Hello пользователю ---------
+    // --------- Говорим Hello пользователю -------------------------------------------
     public String sayHelloToUser(Update update) {
         String user = update.message().chat().firstName()
                 != null ? update.message().chat().firstName() : "user";
@@ -33,7 +35,7 @@ public class MessagesService {
         return messageText;
     }
 
-    // --------- Говорим "Ошибка" пользователю ---------
+    // --------- Говорим "Ошибка" пользователю -------------------------------------------
     public String sayAboutMistakeToUser() {
         String messageText = "Некорректный ввод. " +
                 "Для установки напоминания, введите: ДАТА | ВРЕМЯ | ТЕКСТ НАПОМИНАНИЯ " +
@@ -41,7 +43,7 @@ public class MessagesService {
         return messageText;
     }
 
-    // --------- Проверяем, является вводимая строка датой/временем  ---------
+    // *****************************************************************************************
     public String checkInputMessage(Long chatId, String userMessage) {
         //  --- (1) if userMessage == "/start" -------------------------
         if (userMessage.equals("/start")) {
@@ -64,43 +66,44 @@ public class MessagesService {
         }
 
         // ---- (3) ---- Проверяем на соответствие даты и времени -----
-        String pattern = "dd.MM.yyyy";
+        String pattern = "dd.MM.yyyy HH:mm";
+        String dateTime = date + " " + time;
+        LocalDateTime localDateTime;
         try {
-            LocalDate.parse(date, DateTimeFormatter.ofPattern(pattern));
+            localDateTime = LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern(pattern));
         } catch (Exception e) {
-            logger.info(date + " - Incorrect format of date");
+            logger.info(date + " - Incorrect format of date/time");
             return "Incorrect";
         }
-        ;
-        pattern = "HH:mm";
-        try {
-            LocalTime.parse(time, DateTimeFormatter.ofPattern(pattern));
-        } catch (Exception e) {
-            logger.info(time + " - Incorrect format of time");
-            return "Incorrect";
-        }
-        ;
 
         logger.info("Date is " + date);
         logger.info("Time is " + time);
         logger.info("Note is " + note);
 
         // ---- (4) ---- Всё ОК. Записываем значения в таблицу -------------------
-        String dateTime = date + " " + time;
-        pattern = "dd.MM.yyyy HH:mm";
-        LocalDateTime localDateTime = LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern(pattern));
+
         logger.info("LocalDateTime " + localDateTime);
         addInfoToBase(chatId, note, localDateTime);
         return "ok";
     }
 
     // ========== записываем информацию в таблицу ============
-    private void addInfoToBase(Long id_chat, String message, LocalDateTime dateTime) {
-        logger.info("Записываем в БД: id_chat {}, message- {}, dateTime {}", id_chat, message, dateTime);
+    private void addInfoToBase(Long idChat, String message, LocalDateTime dateTime) {
+        logger.info("Записываем в БД: idChat {}, message- {}, dateTime {}", idChat, message, dateTime);
         NotificationTask notificationTask = new NotificationTask();
-        notificationTask.setId_chat(id_chat);
+        notificationTask.setIdChat(idChat);
         notificationTask.setMessage(message);
-        notificationTask.setDate_time(dateTime);
+        notificationTask.setDateTime(dateTime);
+        notivicationTaskRepository.save(notificationTask);
+    }
+
+    // ========== удаляем запись из таблицы ============
+    private void removeInfoToBase(Long idChat, String message, LocalDateTime dateTime) {
+        logger.info("Записываем в БД: idChat {}, message- {}, dateTime {}", idChat, message, dateTime);
+        NotificationTask notificationTask = new NotificationTask();
+        notificationTask.setIdChat(idChat);
+        notificationTask.setMessage(message);
+        notificationTask.setDateTime(dateTime);
         notivicationTaskRepository.save(notificationTask);
     }
 }

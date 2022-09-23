@@ -11,20 +11,20 @@ public class NotificationTask {
     @Id
     @GeneratedValue
     private Integer key;
-    private Long id_chat;
+    private Long idChat;
     private String message;
-    private LocalDateTime date_time;
+    private LocalDateTime dateTime;
 
     public Integer getKey() {
         return key;
     }
 
-    public Long getId_chat() {
-        return id_chat;
+    public Long getIdChat() {
+        return idChat;
     }
 
-    public void setId_chat(Long id_chat) {
-        this.id_chat = id_chat;
+    public void setIdChat(Long idChat) {
+        this.idChat = idChat;
     }
 
     public String getMessage() {
@@ -35,12 +35,12 @@ public class NotificationTask {
         this.message = message;
     }
 
-    public LocalDateTime getDate_time() {
-        return date_time;
+    public LocalDateTime getDateTime() {
+        return dateTime;
     }
 
-    public void setDate_time(LocalDateTime date_time) {
-        this.date_time = date_time;
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 
     @Override
@@ -48,21 +48,21 @@ public class NotificationTask {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NotificationTask that = (NotificationTask) o;
-        return Objects.equals(key, that.key) && Objects.equals(id_chat, that.id_chat) && Objects.equals(message, that.message) && Objects.equals(date_time, that.date_time);
+        return Objects.equals(key, that.key) && Objects.equals(idChat, that.idChat) && Objects.equals(message, that.message) && Objects.equals(dateTime, that.dateTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(key, id_chat, message, date_time);
+        return Objects.hash(key, idChat, message, dateTime);
     }
 
     @Override
     public String toString() {
         return "NotificationTask{" +
                 "key=" + key +
-                ", id_chat=" + id_chat +
+                ", idChat=" + idChat +
                 ", message='" + message + '\'' +
-                ", date_time=" + date_time +
+                ", dateTime=" + dateTime +
                 '}';
     }
 }

@@ -1,4 +1,4 @@
--- liquiase formatted sql
+-- liquibase formatted sql
 
 -- changeset ilyachernilsev:2
 

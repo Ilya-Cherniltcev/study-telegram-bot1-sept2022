@@ -25,14 +25,15 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
 
     private boolean isSaidHello = false;
-    @Autowired
+    //    @Autowired
     private TelegramBot telegramBot;
     private final MessagesService messagesService;
     private final SheduleService sheduleService;
 
-    public TelegramBotUpdatesListener(MessagesService messagesService, SheduleService sheduleService) {
+    public TelegramBotUpdatesListener(MessagesService messagesService, SheduleService sheduleService, TelegramBot telegramBot) {
         this.messagesService = messagesService;
         this.sheduleService = sheduleService;
+        this.telegramBot = telegramBot;
     }
 
     @PostConstruct
@@ -64,12 +65,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     textToUser = "Всё ОК. Записано))";
                 }
                 printMessageToUser(chatId, textToUser);
-            } catch (NullPointerException e) {
+            } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-            ;
         }
-        ;
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
@@ -87,10 +86,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         if (tasks != null && !tasks.isEmpty()) {
             // --- напоминаем пользователям про записанные задачи ----------
             for (NotificationTask t : tasks) {
-                Long chatId = t.getId_chat();
+                Long chatId = t.getIdChat();
                 String remindMessage = t.getMessage();
                 logger.info("Reminder: {} || {}", chatId, remindMessage);
                 printMessageToUser(chatId, remindMessage);
+                // --- удаляем запиь о напомненной задаче из БД --------------
+                sheduleService.removeTask(t);
             }
         }
     }
