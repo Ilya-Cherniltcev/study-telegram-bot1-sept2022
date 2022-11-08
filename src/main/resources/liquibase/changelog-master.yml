@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      #      file: liquibase/scripts/init_baseXML.xml
+
+      file: liquibase/scripts/initbase.sql
